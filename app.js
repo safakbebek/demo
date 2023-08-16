@@ -1,16 +1,15 @@
-const Koa = require('koa');
-const {koaBody} = require('koa-body');
+const express = require('express');
 
-const app = new Koa();
+const app = express();
 
 // middleware
-app.use(koaBody());
 
+app.get("/",(req,res)=> {
+  return res.send("Hi");
+})
 // Require the routers
-let items = require('./items.js');
 
 
 // use the routes
-app.use(items.routes());
 
 app.listen(3000);
