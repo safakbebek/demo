@@ -5,7 +5,7 @@ const app = express();
 // middleware
 
 app.get("/",(req,res)=> {
-  return res.send("Hi, test request");
+  return res.send("Hi, t2est request");
 })
 // Require the routers
 
