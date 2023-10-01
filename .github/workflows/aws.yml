@@ -44,20 +44,21 @@ jobs:
       - name: Retrieve Secrets from AWS Secrets Manager
         id: secrets
         run: |
-          SECRET_OUTPUT=$(aws secretsmanager get-secret-value --secret-id scouthub-dev --query "SecretString" --output text | jq -r 'to_entries[] | "\(.key)=\(.value)"')
-          echo "$SECRET_OUTPUT" > ecs_secrets.env
+          SECRET_OUTPUT=$(aws secretsmanager get-secret-value --secret-id scouthub-dev --query "SecretString" --output text | jq  -r 'to_entries[] | [.key, "=", "\"", .value, "\"" ] | @tsv' \
+          | tr -d "\t"')
+          echo "SECRET_OUTPUT=$SECRET_OUTPUT" >> $GITHUB_ENV
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@c804dfbdd57f713b6c079302a4c01db7017a36fc
         with:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
           container-name: ${{ env.CONTAINER_NAME }}
-          image: "sdaas"
-          environment-files: |
-            ecs_secrets.env
+          image: "task"
+          environment-variables: |
+            $SECRET_OUTPUT
       - name: Show Secrets Output
         run: |
-          echo "Secrets Output: $(cat ecs_secrets.env)"
+          echo "Secrets Output: $SECRET_OUTPUT"
           echo "Task: $(cat ${{ steps.task-def.outputs.task-definition }})"
 
       # - name: Login to Amazon ECR
