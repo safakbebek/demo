@@ -45,6 +45,7 @@ jobs:
         id: secrets
         run: |
           SECRET_OUTPUT=$(aws secretsmanager get-secret-value --secret-id scouthub-dev --query "SecretString" --output text | jq  -r 'to_entries[] | [.key, "=", "\"", .value, "\"" ] | @tsv' | tr -d "\t")
+          echo "Test $SECRET_OUTPUT"
           echo "::set-output name=secretOutput::$SECRET_OUTPUT"
       - name: Show Secrets Output
         run: |
