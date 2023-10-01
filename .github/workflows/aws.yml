@@ -45,7 +45,6 @@ jobs:
         id: secrets
         run: |
           SECRET_OUTPUT=$(aws secretsmanager get-secret-value --secret-id scouthub-dev --query "SecretString" --output text | jq  -r 'to_entries[] | [.key, "=", "\"", .value, "\"" ] | @tsv' | tr -d "\t")
-          echo "::set-output name=secretOutput::$SECRET_OUTPUT"
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@c804dfbdd57f713b6c079302a4c01db7017a36fc
@@ -54,10 +53,10 @@ jobs:
           container-name: ${{ env.CONTAINER_NAME }}
           image: "task"
           environment-variables: |
-            ${{ steps.secrets.outputs.secretOutput }}
+            $SECRET_OUTPUT
       - name: Show Secrets Output
         run: |
-          echo "${{ steps.secrets.outputs.secretOutput }}"
+          echo $SECRET_OUTPUT
           echo "Task: $(cat ${{ steps.task-def.outputs.task-definition }})"
 
       # - name: Login to Amazon ECR
