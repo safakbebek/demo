@@ -50,7 +50,7 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
       - name: Show Secrets Output1
         run: |
-          echo -e "$SECRET_OUTPUT"
+          echo -e "${{env.SECRET_OUTPUT}}"
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@c804dfbdd57f713b6c079302a4c01db7017a36fc
@@ -59,7 +59,7 @@ jobs:
           container-name: ${{ env.CONTAINER_NAME }}
           image: "task"
           environment-variables: |
-            $SECRET_OUTPUT
+            ${{env.SECRET_OUTPUT}}
       - name: Show Secrets Output
         run: |
           echo $SECRET_OUTPUT
