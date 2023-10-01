@@ -45,6 +45,9 @@ jobs:
         id: secrets
         run: |
           SECRET_OUTPUT=$(aws secretsmanager get-secret-value --secret-id scouthub-dev --query "SecretString" --output text | jq  -r 'to_entries[] | [.key, "=", "\"", .value, "\"" ] | @tsv' | tr -d "\t")
+      - name: Show Secrets Output1
+        run: |
+          echo $SECRET_OUTPUT
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@c804dfbdd57f713b6c079302a4c01db7017a36fc
