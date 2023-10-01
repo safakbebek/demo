@@ -44,12 +44,16 @@ jobs:
       - name: Retrieve Secrets from AWS Secrets Manager
         id: secrets
         run: |
-          SECRET_OUTPUT=$(aws secretsmanager get-secret-value --secret-id scouthub-dev --query "SecretString" --output text | jq  -r 'to_entries[] | [.key, "=", "\"", .value, "\"" ] | @tsv' | tr -d "\t")
-          echo "Test $SECRET_OUTPUT"
+          SECRET_OUTPUT=$(aws secretsmanager get-secret-value --secret-id scouthub-dev --query "SecretString" --output text | jq  -r 'to_entries[] | [.key, "=", "\"", .value, "\"" ] | join(" ")')
           echo "SECRET_OUTPUT=$SECRET_OUTPUT" >> $GITHUB_ENV
       - name: Show Secrets Output
         run: |
-          echo "Secrets Output: $DB_USER"
+          echo "Secrets Output: $SECRET_OUTPUT"
+      - name: Parse Secrets
+        id: parse-secrets
+        run: |
+          # Parse the SECRET_OUTPUT into individual environment variables
+          eval "$(echo $SECRET_OUTPUT)"
 
       # - name: Login to Amazon ECR
       #   id: login-ecr
