@@ -58,7 +58,7 @@ jobs:
       - name: Show Secrets Output
         run: |
           echo "Secrets Output: $(cat ecs_secrets.env)"
-          echo "Task: ${{ steps.task-def.outputs.task-definition }}"
+          echo "Task: $(cat ${{ steps.task-def.outputs.task-definition }})"
 
       # - name: Login to Amazon ECR
       #   id: login-ecr
