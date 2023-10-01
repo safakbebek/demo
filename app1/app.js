@@ -6,7 +6,7 @@ const app = express();
 
 app.get("/",(req,res)=> {
   return res.send("Hi "); 
-})          
+})           
 // Require the routers
  
   
