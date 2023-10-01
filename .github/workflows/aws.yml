@@ -44,7 +44,10 @@ jobs:
       - name: Retrieve Secrets from AWS Secrets Manager
         id: secrets
         run: |
-          SECRET_OUTPUT=$(aws secretsmanager get-secret-value --secret-id scouthub-dev --query "SecretString" --output text | jq  -r 'to_entries[] | [.key, "=", "\"", .value, "\"" ] | @tsv' | tr -d "\t")
+          SECRET_OUTPUT=$(aws secretsmanager get-secret-value --secret-id scouthub-dev --query "SecretString" --output text | jq -r 'to_entries[] | [.key, "=", .value] | join("")')
+          echo "SECRET_OUTPUT<<EOF" >> $GITHUB_ENV
+          echo "$SECRET_OUTPUT" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
       - name: Show Secrets Output1
         run: |
           echo $SECRET_OUTPUT
